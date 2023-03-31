@@ -1,0 +1,8 @@
+.env
+*__pycache__
+sentiment analysis/.*
+node_modules
+sql_app.db
+bot_dice.js
+bot.js
+
