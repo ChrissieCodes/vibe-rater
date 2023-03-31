@@ -21,7 +21,10 @@ def get_db():
         db.close()
 
     # TODO: please write a unit test to decompose this issue.
-
+@app.get("/totals/", response_model=list[Sentiment])
+def total_sentiment(db:Session = Depends(get_db)):
+    return repository.get_totals_by_username(db=db)
+    
 
 @app.post("/sentiment/", response_model=Sentiment)
 def new_sentiment(sentiment: SentimentCreate, db: Session = Depends(get_db)):
@@ -45,15 +48,6 @@ def updated_sentiment(sentiment: SentimentUpdate, db: Session = Depends(get_db))
     db_sentiment = repository.update_sentiment(db, sentiment=sentiment)
     print(db_sentiment)
     return db_sentiment
-
-#this was where I left off, I was trying to aggregate the postive vibes for a user from the datatable. 
-@app.get("/sentiment/{username}", response_model=Sentiment)
-def read_sentiment(username: str, db: Session = Depends(get_db)):
-    db_sentiment = repository.get_sentiment_by_username(db, username = Sentiment.username)
-    if db_sentiment is None:
-        raise HTTPException(status_code=404, detail="Sentiment Not Found")
-    return db_sentiment
-
 
 @app.get("/")
 async def root():

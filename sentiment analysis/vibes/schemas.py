@@ -9,6 +9,7 @@ class SentimentBase(BaseModel):
     neutral: float
     negative: float
     number_of_chats: int
+    vibe_sum:float
     
 class SentimentCreate(SentimentBase):
     pass

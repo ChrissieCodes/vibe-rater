@@ -57,9 +57,10 @@ async function onMessageHandler(target, context, msg, self) {
 
   const goodvibes = `${Math.round(data.positive * 100, 3)}`;
   const badvibes = `${Math.round(data.negative * 100, 3)}`;
+  const compound = `${Math.round(data.compound * 100, 3)}`;
   console.log(
     target,
-    `${user}, your chat is ${goodvibes - badvibes}% Good Vibes `,
+    `${user}, your chat is ${goodvibes - badvibes}% Good Vibes; compound is ${compound}`,
     messageID
   );
 }
@@ -96,6 +97,7 @@ async function onVibesHandler(target, context, msg, self) {
     const data = await response.json();
     const goodvibes = `${Math.round(data.positive * 100, 3)}`;
     const badvibes = `${Math.round(data.negative * 100, 3)}`;
+    const compound = `${Math.round(data.compound * 100, 3)}`;
     const allchat = await fetch("http://127.0.0.1:8000/sentiment/{user}", {
       headers: { "Content-Type": "application/json" },
       method: "Get",
@@ -104,13 +106,49 @@ async function onVibesHandler(target, context, msg, self) {
     console.log(`* Executed ${commandName} command`);
     client.reply(
       target,
-      `${user}, your chat is ${goodvibes - badvibes}% Good Vibes `,
+      `${user}, your chat is ${goodvibes - badvibes}% Good Vibes;`,
       messageID
     );
     // client.say(target,`${user}, your chat is ${goodvibes-badvibes}% Good Vibes `);
   }
 }
 
+async function onVibeRatingHandler(target, context, msg, self) {
+  if (self || context["display-name"] === "StreamElements") {
+    return;
+  } // Ignore messages from the bot
+
+  // Remove whitespace from chat message
+  const commandName = msg.trim();
+
+  const user = context["display-name"];
+
+  const sanitizedMsg = commandName.replace(/`/g, "");
+  if (commandName.startsWith("!viberating")) {
+    const response = await fetch("http://127.0.0.1:8000/totals/{user}", {
+      headers: { "Content-Type": "application/json" },
+      method: "Get",
+    });
+    const data = await response.json();
+    const rank = data.rank;
+    const count = data.user_count
+    client.reply(
+      target,
+      `${user}, you are ranked ${rank} out of ${count} users;`,
+    );
+    const allchat = await fetch("http://127.0.0.1:8000/sentiment/{user}", {
+      headers: { "Content-Type": "application/json" },
+      method: "Get",
+    });
+    console.log(allchat)
+    console.log(`* Executed ${commandName} command`);
+    client.reply(
+      target,
+      `${user}, you are ranked ${rank} out of ${count} users;`,
+    );
+    // client.say(target,`${user}, your chat is ${goodvibes-badvibes}% Good Vibes `);
+  }
+}
 function onConnectedHandler(addr, port) {
   console.log(`* Connected to ${addr}:${port}`);
 }

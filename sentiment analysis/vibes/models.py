@@ -12,3 +12,4 @@ class Sentiment(Base):
     neutral = Column(Float)
     negative = Column(Float)
     number_of_chats = Column(Integer)
+    vibe_sum = Column(Integer, positive - negative)
