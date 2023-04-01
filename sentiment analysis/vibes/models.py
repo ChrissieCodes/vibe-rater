@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from database import Base
 
@@ -12,4 +13,12 @@ class Sentiment(Base):
     neutral = Column(Float)
     negative = Column(Float)
     number_of_chats = Column(Integer)
-    vibe_sum = Column(Integer, positive - negative)
+
+    def __init__(self,positive, negative):
+        self.positive = positive
+        self.negative = negative
+        
+    @hybrid_property
+    def vibe_sum(self):
+        return self.positive - self.negative
+

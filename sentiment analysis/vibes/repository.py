@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import functions
+from sqlalchemy import func
 
 import models, schemas
 
@@ -25,5 +25,5 @@ def update_sentiment(db: Session, sentiment: schemas.SentimentCreate):
     return db_sentiment
 
 def get_totals_by_username(db: Session):
-    qry = db.query(models.Sentiment.username, functions.sum(models.Sentiment.vibe_sum))
-    return qry.group_by(models.Sentiment.username)
+    return db.query(models.Sentiment.username, func.sum(models.Sentiment.vibe_sum)).group_by(models.Sentiment.username)
+    

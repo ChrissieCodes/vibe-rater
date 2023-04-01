@@ -30,11 +30,11 @@ def total_sentiment(db:Session = Depends(get_db)):
 def new_sentiment(sentiment: SentimentCreate, db: Session = Depends(get_db)):
         return repository.create_sentiment(db=db,sentiment=sentiment)
 
-@app.post("/sentiment/function/", response_model=Sentiment)
-def new_sentiment(sentiment: SentimentCreate):
-    db_sentiment = repository.create_sentiment(sentiment)
-    if db_sentiment:
-        raise HTTPException(status_code=400, detail="Sentiment Created")
+# @app.post("/sentiment/function/", response_model=Sentiment)
+# def new_sentiment(sentiment: SentimentCreate):
+#     db_sentiment = repository.create_sentiment(sentiment)
+#     if db_sentiment:
+#         raise HTTPException(status_code=400, detail="Sentiment Created")
 
 
 @app.get("/sentiment/", response_model=list[Sentiment])
