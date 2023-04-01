@@ -17,6 +17,7 @@ const client = new tmi.Client(opts);
 client.on("message", onVibesHandler);
 client.on("connected", onConnectedHandler);
 client.on("message", onMessageHandler);
+client.on("message", onVibeRatingHandler);
 
 // Connect to Twitch:
 client.connect();
@@ -60,7 +61,9 @@ async function onMessageHandler(target, context, msg, self) {
   const compound = `${Math.round(data.compound * 100, 3)}`;
   console.log(
     target,
-    `${user}, your chat is ${goodvibes - badvibes}% Good Vibes; compound is ${compound}`,
+    `${user}, your chat is ${
+      goodvibes - badvibes
+    }% Good Vibes; compound is ${compound}`,
     messageID
   );
 }
@@ -76,9 +79,7 @@ async function onMessageHandler(target, context, msg, self) {
 async function onVibesHandler(target, context, msg, self) {
   if (self || context["display-name"] === "StreamElements") {
     return;
-  } // Ignore messages from the bot
-
-  // Remove whitespace from chat message
+  } 
   const commandName = msg.trim();
 
   const user = context["display-name"];
@@ -102,7 +103,7 @@ async function onVibesHandler(target, context, msg, self) {
       headers: { "Content-Type": "application/json" },
       method: "Get",
     });
-    console.log(allchat)
+    console.log(allchat);
     console.log(`* Executed ${commandName} command`);
     client.reply(
       target,
@@ -116,35 +117,41 @@ async function onVibesHandler(target, context, msg, self) {
 async function onVibeRatingHandler(target, context, msg, self) {
   if (self || context["display-name"] === "StreamElements") {
     return;
-  } // Ignore messages from the bot
-
-  // Remove whitespace from chat message
+  }
   const commandName = msg.trim();
 
   const user = context["display-name"];
 
   const sanitizedMsg = commandName.replace(/`/g, "");
+  const messageID = context.id;
   if (commandName.startsWith("!viberating")) {
-    const response = await fetch("http://127.0.0.1:8000/totals/{user}", {
+    const response = await fetch("http://127.0.0.1:8000/totals/", {
       headers: { "Content-Type": "application/json" },
       method: "Get",
     });
     const data = await response.json();
-    const rank = data.rank;
-    const count = data.user_count
-    client.reply(
-      target,
-      `${user}, you are ranked ${rank} out of ${count} users;`,
-    );
-    const allchat = await fetch("http://127.0.0.1:8000/sentiment/{user}", {
-      headers: { "Content-Type": "application/json" },
-      method: "Get",
-    });
-    console.log(allchat)
+    let chat_total=0
+    for (let row of data){chat_total+=row.vibe_total;}
+    let chat_average = chat_total/(data.length || 1)
+    let result = [];
+    data.reduce(function(res, value) {
+      if (!res[value.username]) {
+        res[value.username] = { username: value.username, vibe_total: 0 };
+        result.push(res[value.username])
+      }
+      res[value.username].vibe_total += value.vibe_total;
+      return res;
+    }, {});
+
+    result.sort((a,b)=> b.vibe_total- a.vibe_total)
+    console.log(result)
+    user_index = result.findIndex(row => row.username === user)
+    total_length = result.length
     console.log(`* Executed ${commandName} command`);
     client.reply(
       target,
-      `${user}, you are ranked ${rank} out of ${count} users;`,
+      `${user}, you are the  #${user_index + 1} ranked user of good vibes out of ${total_length} users. The average vibe in chat is ${chat_average*100}%;`,
+      messageID
     );
     // client.say(target,`${user}, your chat is ${goodvibes-badvibes}% Good Vibes `);
   }

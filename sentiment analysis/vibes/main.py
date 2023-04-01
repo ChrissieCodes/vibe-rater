@@ -21,21 +21,16 @@ def get_db():
         db.close()
 
     # TODO: please write a unit test to decompose this issue.
-@app.get("/totals/", response_model=list[Sentiment])
-def total_sentiment(db:Session = Depends(get_db)):
-    return repository.get_totals_by_username(db=db)
-    
+
+
+@app.get(
+    "/totals/")
+def total_sentiment(db: Session = Depends(get_db)):
+    return [x.to_dict() for x in repository.get_totals_by_username(db=db)]
 
 @app.post("/sentiment/", response_model=Sentiment)
 def new_sentiment(sentiment: SentimentCreate, db: Session = Depends(get_db)):
-        return repository.create_sentiment(db=db,sentiment=sentiment)
-
-# @app.post("/sentiment/function/", response_model=Sentiment)
-# def new_sentiment(sentiment: SentimentCreate):
-#     db_sentiment = repository.create_sentiment(sentiment)
-#     if db_sentiment:
-#         raise HTTPException(status_code=400, detail="Sentiment Created")
-
+    return repository.create_sentiment(db=db, sentiment=sentiment)
 
 @app.get("/sentiment/", response_model=list[Sentiment])
 def read_sentiment(db: Session = Depends(get_db)):
@@ -48,6 +43,7 @@ def updated_sentiment(sentiment: SentimentUpdate, db: Session = Depends(get_db))
     db_sentiment = repository.update_sentiment(db, sentiment=sentiment)
     print(db_sentiment)
     return db_sentiment
+
 
 @app.get("/")
 async def root():
