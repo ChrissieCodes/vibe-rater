@@ -14,10 +14,10 @@ class Sentiment(Base):
     negative = Column(Float)
     number_of_chats = Column(Integer)
 
-    def __init__(self,positive, negative):
+    def __init__(self, positive, negative):
         self.positive = positive
         self.negative = negative
-        
+
     @hybrid_property
     def vibe_sum(self):
         return self.positive - self.negative

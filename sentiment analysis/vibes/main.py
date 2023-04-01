@@ -20,15 +20,16 @@ def get_db():
     finally:
         db.close()
 
-    # TODO: please write a unit test to decompose this issue.
+
+# TODO: please write a unit test to decompose this issue.
 @app.get("/totals/", response_model=list[Sentiment])
-def total_sentiment(db:Session = Depends(get_db)):
+def total_sentiment(db: Session = Depends(get_db)):
     return repository.get_totals_by_username(db=db)
-    
+
 
 @app.post("/sentiment/", response_model=Sentiment)
 def new_sentiment(sentiment: SentimentCreate, db: Session = Depends(get_db)):
-        return repository.create_sentiment(db=db,sentiment=sentiment)
+    return repository.create_sentiment(db=db, sentiment=sentiment)
 
 # @app.post("/sentiment/function/", response_model=Sentiment)
 # def new_sentiment(sentiment: SentimentCreate):
@@ -48,6 +49,7 @@ def updated_sentiment(sentiment: SentimentUpdate, db: Session = Depends(get_db))
     db_sentiment = repository.update_sentiment(db, sentiment=sentiment)
     print(db_sentiment)
     return db_sentiment
+
 
 @app.get("/")
 async def root():
