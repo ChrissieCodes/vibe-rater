@@ -18,6 +18,7 @@ client.on("message", onVibesHandler);
 client.on("connected", onConnectedHandler);
 client.on("message", onMessageHandler);
 client.on("message", onVibeRatingHandler);
+client.on("message", onSerialBubbler);
 
 // Connect to Twitch:
 client.connect();
@@ -89,6 +90,7 @@ async function onVibesHandler(target, context, msg, self) {
   const messageID = context.id;
   if (commandName.startsWith("!vibes")) {
     const sentence = sanitizedMsg.split("!vibes ")[1];
+    console.log(sentence)
     request_chat = JSON.stringify({ message: sentence });
     const response = await fetch("http://127.0.0.1:8000/chat/", {
       headers: { "Content-Type": "application/json" },
@@ -99,7 +101,7 @@ async function onVibesHandler(target, context, msg, self) {
     const goodvibes = `${Math.round(data.positive * 100, 3)}`;
     const badvibes = `${Math.round(data.negative * 100, 3)}`;
     const compound = `${Math.round(data.compound * 100, 3)}`;
-    const allchat = await fetch("http://127.0.0.1:8000/sentiment/{user}", {
+    const allchat = await fetch(`http://127.0.0.1:8000/sentiment/`, {
       headers: { "Content-Type": "application/json" },
       method: "Get",
     });
@@ -142,7 +144,6 @@ async function onVibeRatingHandler(target, context, msg, self) {
       res[value.username].vibe_total += value.vibe_total;
       return res;
     }, {});
-
     result.sort((a,b)=> b.vibe_total- a.vibe_total)
     console.log(result)
     user_index = result.findIndex(row => row.username === user)
@@ -159,3 +160,15 @@ async function onVibeRatingHandler(target, context, msg, self) {
 function onConnectedHandler(addr, port) {
   console.log(`* Connected to ${addr}:${port}`);
 }
+async function onSerialBubbler(target, context, msg, self) {
+  
+  if (self || context["display-name"] === "mechachrissie") {
+    const commandName = msg.trim();
+    // const sanitizedMsg = commandName.replace(/`/g, "");
+    if (commandName.startsWith("!irlBubbles")) {
+      const response = await fetch("http://127.0.0.1:8000/serial/", {
+        headers: { "Content-Type": "application/json" },
+        method: "Get",
+      });
+  }
+}}

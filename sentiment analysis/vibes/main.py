@@ -7,6 +7,9 @@ from sqlalchemy.orm import Session
 import repository
 import models
 from dotenv import load_dotenv
+import serial
+import serial.tools.list_ports
+import time
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -55,3 +58,10 @@ async def add_chat(chat: Chat):
     chat_rating = vibe_rater(chat.message)
     print(chat_rating)
     return chat_rating
+
+@app.get("/serial/")
+def run_bubbles():
+    with serial.Serial('COM4',115200,bytesize=8,parity='N',stopbits=1, timeout=1) as ser:
+        time.sleep(4)
+        ser.write(b'q')
+        ser.flush()
