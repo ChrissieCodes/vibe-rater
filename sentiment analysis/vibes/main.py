@@ -4,16 +4,40 @@ from pydantic import BaseModel
 from database import SessionLocal, engine
 from schemas import Chat, Sentiment, SentimentCreate, SentimentUpdate
 from sqlalchemy.orm import Session
+from contextlib import asynccontextmanager
 import repository
 import models
 from dotenv import load_dotenv
 import serial
-import serial.tools.list_ports
-import time
+
 
 models.Base.metadata.create_all(bind=engine)
+serial_conn = None
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    FastAPT's suggested method for lifespan is an async which yields
+    inbetween setup and teardown. There is a startup and shutdown event but it's
+    been deprecated :/
+    """
+    serial_conn = serial.Serial(
+        'COM4',
+        115200,
+        bytesize=8,
+        parity='N',
+        stopbits=1,
+        timeout=1)
+    if not serial_conn.is_open:
+        serial_conn.open()
+    # Ideally we would sleep for some amount of time here to give windows
+    # time to flush the COM port but somehow sleep within async feels worse!
+    yield
+    serial_conn.close()
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 def get_db():
@@ -59,9 +83,17 @@ async def add_chat(chat: Chat):
     print(chat_rating)
     return chat_rating
 
+
 @app.get("/serial/")
 def run_bubbles():
-    with serial.Serial('COM4',115200,bytesize=8,parity='N',stopbits=1, timeout=1) as ser:
-        time.sleep(4)
-        ser.write(b'q')
-        ser.flush()
+    # without a sleep, it's possible to DOS, and possibly crash the connection
+    # to the serial port here. It's unlikely to cause any harm, but it may
+    # require a restart of the app to recover (and perhaps the USB host).
+    if not serial.is_open:
+        serial_conn.open()
+        # we should never need to reopen the connection here, but IFF we do
+        # it will likely also require a delay before sending any data
+        # time.sleep(2)
+
+    serial_conn.write(b'q')
+    serial_conn.flush()
