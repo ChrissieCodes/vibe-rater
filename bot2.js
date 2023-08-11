@@ -157,12 +157,14 @@ async function onVibeRatingHandler(target, context, msg, self) {
     // client.say(target,`${user}, your chat is ${goodvibes-badvibes}% Good Vibes `);
   }
 }
+
 function onConnectedHandler(addr, port) {
   console.log(`* Connected to ${addr}:${port}`);
 }
+
 async function onSerialBubbler(target, context, msg, self) {
-  
-  if (self || context["display-name"] === "mechachrissie") {
+  let uname = context["display-name"]
+  if (self || uname === "mechachrissie" || uname === "chrissiecodes") {
     const commandName = msg.trim();
     // const sanitizedMsg = commandName.replace(/`/g, "");
     if (commandName.startsWith("!irlBubbles")) {
@@ -170,5 +172,6 @@ async function onSerialBubbler(target, context, msg, self) {
         headers: { "Content-Type": "application/json" },
         method: "Get",
       });
+    }
   }
-}}
+}
