@@ -16,18 +16,14 @@ class Sentiment(Base):
     number_of_chats = Column(Integer)
     vibe_sum = column_property(positive - negative)
 
-    
     @hybrid_property
     def vibe_total(self):
         return sum(vibe for vibe in "Sentiment")
-    
+
     @vibe_total.expression
     def vibe_total(cls):
         return select(func.sum("Sentiment".vibe_sum))
-    # @vibe_total.expression
-    # def vibe_total(cls):
-    #     return func.sum(cls.vibe_sum)
-    
+
     @hybrid_method
     def to_dict(self):
         return {"username": self.username, "vibe_total": self.vibe_sum}

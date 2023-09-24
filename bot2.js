@@ -1,4 +1,8 @@
 require("dotenv").config();
+
+//environment, because I stream (sorry ya'll)
+const HOST = "http://127.0.0.1:8000"
+
 // set up tmi.js bot package
 const tmi = require("tmi.js");
 const fetch = require("node-fetch");
@@ -8,7 +12,7 @@ const opts = {
     username: "mechachrissie",
     password: `oauth:${process.env.OAUTH_TOKEN}`,
   },
-  channels: ["chrissiecodes"],
+  channels: ["marximusmaximus"],
 };
 
 const client = new tmi.Client(opts);
@@ -34,7 +38,7 @@ async function onMessageHandler(target, context, msg, self) {
   const messageID = context.id;
   const sentence = sanitizedMsg;
   request_chat = JSON.stringify({ message: sentence });
-  const response = await fetch("http://127.0.0.1:8000/chat/", {
+  const response = await fetch(`${HOST}/chat/`, {
     headers: { "Content-Type": "application/json" },
     method: "POST",
     body: request_chat,
@@ -50,7 +54,7 @@ async function onMessageHandler(target, context, msg, self) {
     negative: data.negative,
     number_of_chats: 1,
   });
-  const url = `http://127.0.0.1:8000/sentiment/`;
+  const url = `${HOST}/sentiment/`;
   const put = await fetch(url, {
     headers: { "Content-Type": "application/json" },
     method: "POST",
@@ -92,7 +96,7 @@ async function onVibesHandler(target, context, msg, self) {
     const sentence = sanitizedMsg.split("!vibes ")[1];
     console.log(sentence)
     request_chat = JSON.stringify({ message: sentence });
-    const response = await fetch("http://127.0.0.1:8000/chat/", {
+    const response = await fetch(`${HOST}/chat/`, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: request_chat,
@@ -101,7 +105,7 @@ async function onVibesHandler(target, context, msg, self) {
     const goodvibes = `${Math.round(data.positive * 100, 3)}`;
     const badvibes = `${Math.round(data.negative * 100, 3)}`;
     const compound = `${Math.round(data.compound * 100, 3)}`;
-    const allchat = await fetch(`http://127.0.0.1:8000/sentiment/`, {
+    const allchat = await fetch(`${HOST}/sentiment/`, {
       headers: { "Content-Type": "application/json" },
       method: "Get",
     });
@@ -127,7 +131,7 @@ async function onVibeRatingHandler(target, context, msg, self) {
   const sanitizedMsg = commandName.replace(/`/g, "");
   const messageID = context.id;
   if (commandName.startsWith("!viberating")) {
-    const response = await fetch("http://127.0.0.1:8000/totals/", {
+    const response = await fetch(`${HOST}/totals/`, {
       headers: { "Content-Type": "application/json" },
       method: "Get",
     });
