@@ -1,29 +1,25 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func,select
-
-import models, schemas
+import models
 
 
-def get_sentiment(db: Session):
+def get_sentiment(db):
     return db.query(models.Sentiment).all()
 
 
-def get_sentiment_by_username(db: Session, username: str):
+def get_sentiment_by_username(db, username: str):
     return (
         db.query(models.Sentiment).filter(models.Sentiment.username == username).first()
     )
 
 
-def create_sentiment(db: Session, sentiment: schemas.SentimentCreate):
-    db_sentiment = models.Sentiment(**sentiment.dict())
-    print(db_sentiment.__dict__)
+def create_sentiment(db, sentiment):
+    db_sentiment = models.Sentiment(**sentiment)
     db.add(db_sentiment)
     db.commit()
     db.refresh(db_sentiment)
     return db_sentiment
 
 
-def update_sentiment(db: Session, sentiment: schemas.SentimentCreate):
+def update_sentiment(db, sentiment):
     db_sentiment = (
         db.query(models.Sentiment)
         .filter(models.Sentiment.username == sentiment.username)
@@ -41,7 +37,7 @@ def update_sentiment(db: Session, sentiment: schemas.SentimentCreate):
     return db_sentiment
 
 
-def get_totals_by_username(db: Session):
+def get_totals_by_username(db):
     return db.query(models.Sentiment)
 
 
