@@ -1,5 +1,4 @@
 import spacy
-from spacytextblob import spacytextblob
 import asent
 import bleach
 from cleantext import clean

@@ -43,6 +43,7 @@ def root():
 
 @app.route("/chat/", methods=["POST"])
 def add_chat():
+    print(request.json["message"])
     chat_rating = vibe_rater(request.json["message"])
     return chat_rating
 
@@ -59,3 +60,4 @@ def run_bubbles():
 
 if __name__ == "__main__":
     app.run(host="localhost", port=8000, debug=True)
+    

@@ -12,7 +12,7 @@ const opts = {
     username: "mechachrissie",
     password: `oauth:${process.env.OAUTH_TOKEN}`,
   },
-  channels: ["marximusmaximus"],
+  channels: ["chrissiecodes"],
 };
 
 const client = new tmi.Client(opts);
@@ -94,7 +94,9 @@ async function onVibesHandler(target, context, msg, self) {
   const messageID = context.id;
   if (commandName.startsWith("!vibes")) {
     const sentence = sanitizedMsg.split("!vibes ")[1];
-    console.log(sentence)
+    if(sentence===undefined){
+      return;
+    }
     request_chat = JSON.stringify({ message: sentence });
     const response = await fetch(`${HOST}/chat/`, {
       headers: { "Content-Type": "application/json" },
