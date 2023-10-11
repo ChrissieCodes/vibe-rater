@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 //environment, because I stream (sorry ya'll)
-const HOST = "http://127.0.0.1:8000"
+const HOST = "https://dev.chrissie.codes/vibe-rater"
 
 // set up tmi.js bot package
 const tmi = require("tmi.js");
@@ -22,7 +22,6 @@ client.on("message", onVibesHandler);
 client.on("connected", onConnectedHandler);
 client.on("message", onMessageHandler);
 client.on("message", onVibeRatingHandler);
-client.on("message", onSerialBubbler);
 
 // Connect to Twitch:
 client.connect();
@@ -166,15 +165,17 @@ async function onVibeRatingHandler(target, context, msg, self) {
 function onConnectedHandler(addr, port) {
   console.log(`* Connected to ${addr}:${port}`);
 }
-async function onSerialBubbler(target, context, msg, self) {
+// October 10, 2023: connected kruiz control directly to the api so this function is deprecated
+// 
+// async function onSerialBubbler(target, context, msg, self) {
   
-  if (self || context["display-name"] === "mechachrissie") {
-    const commandName = msg.trim();
-    // const sanitizedMsg = commandName.replace(/`/g, "");
-    if (commandName.startsWith("!irlBubbles")) {
-      const response = await fetch("http://127.0.0.1:8000/serial/", {
-        headers: { "Content-Type": "application/json" },
-        method: "Get",
-      });
-  }
-}}
+//   if (self || context["display-name"] === "mechachrissie") {
+//     const commandName = msg.trim();
+//     // const sanitizedMsg = commandName.replace(/`/g, "");
+//     if (commandName.startsWith("!irlBubbles")) {
+//       const response = await fetch("http://127.0.0.1:8000/serial/", {
+//         headers: { "Content-Type": "application/json" },
+//         method: "Get",
+//       });
+//   }
+// }}
