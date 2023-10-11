@@ -35,7 +35,6 @@ def updated_sentiment():
     db_sentiment = repository.update_sentiment(db, sentiment=request.json)
     return db_sentiment
 
-
 @app.route("/", methods=["GET"])
 def root():
     return {"message": "welcome to my vibe rater"}
