@@ -165,17 +165,3 @@ async function onVibeRatingHandler(target, context, msg, self) {
 function onConnectedHandler(addr, port) {
   console.log(`* Connected to ${addr}:${port}`);
 }
-// October 10, 2023: connected kruiz control directly to the api so this function is deprecated
-// 
-// async function onSerialBubbler(target, context, msg, self) {
-  
-//   if (self || context["display-name"] === "mechachrissie") {
-//     const commandName = msg.trim();
-//     // const sanitizedMsg = commandName.replace(/`/g, "");
-//     if (commandName.startsWith("!irlBubbles")) {
-//       const response = await fetch("http://127.0.0.1:8000/serial/", {
-//         headers: { "Content-Type": "application/json" },
-//         method: "Get",
-//       });
-//   }
-// }}
