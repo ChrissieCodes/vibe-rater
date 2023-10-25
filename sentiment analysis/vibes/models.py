@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Float, Integer, String, func, select
+from sqlalchemy import Column, Float, Integer, String, DateTime, Boolean, func, select
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from datetime import datetime
 from sqlalchemy.orm import column_property
 
 from database import Base
@@ -27,3 +28,15 @@ class Sentiment(Base):
     @hybrid_method
     def to_dict(self):
         return {"username": self.username, "vibe_total": self.vibe_sum}
+
+class Session(Base):
+    __tablename__ = "session"
+    
+    id= Column(Integer, primary_key=True, index=True, autoincrement=True)
+    start = Column(DateTime, default = datetime.datetime.now(datetime.timezone.utc))
+    end = Column(DateTime)
+    status = Column(Boolean)
+    
+    
+
+    
